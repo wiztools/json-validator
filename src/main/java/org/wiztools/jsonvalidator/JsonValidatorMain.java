@@ -1,13 +1,11 @@
 package org.wiztools.jsonvalidator;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.List;
 import joptsimple.OptionParser;
@@ -40,29 +38,36 @@ public class JsonValidatorMain {
         
         List<String> files = (List<String>) options.nonOptionArguments();
         
-        if(files.isEmpty()) {
-            printHelp(System.err);
-            System.exit(1);
-        }
-        
-        JsonParser parser = new JsonParser();
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        
-        int exitStatus = 0;
-        for(String file: files) {
-            File f = new File(file);
-            try {
-                JsonElement el = parser.parse(new FileReader(f));
-                String str = gson.toJson(el);
+        if(files.isEmpty()) { // read from STDIN:
+            try(BufferedReader br = new BufferedReader(
+                    new InputStreamReader(System.in))) {
+                final String out = JsonValidate.validate(br);
                 if(printFormattedOut) {
-                    System.out.println(str);
+                    System.out.println();
+                    System.out.println(out);
                 }
             }
             catch(JsonSyntaxException ex) {
-                System.err.println(f.getName() + ": " + ex.getMessage());
-                exitStatus++;
+                System.err.println(ex.getMessage());
+                System.exit(1);
             }
         }
-        System.exit(exitStatus);
+        else { // open files given in commandline:
+            int exitStatus = 0;
+            for(String file: files) {
+                File f = new File(file);
+                try(FileReader fr = new FileReader(f)) {
+                    final String out = JsonValidate.validate(fr);
+                    if(printFormattedOut) {
+                        System.out.println(out);
+                    }
+                }
+                catch(JsonSyntaxException ex) {
+                    System.err.println(f.getName() + ": " + ex.getMessage());
+                    exitStatus++;
+                }
+            }
+            System.exit(exitStatus);
+        }
     }
 }
