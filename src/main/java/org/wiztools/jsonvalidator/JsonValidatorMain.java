@@ -44,7 +44,9 @@ public class JsonValidatorMain {
                     new InputStreamReader(System.in))) {
                 final String out = JsonValidate.validate(br);
                 if(printFormattedOut) {
-                    System.out.println();
+                    if(System.console() != null) {
+                        System.out.println();
+                    }
                     System.out.println(out);
                 }
             }
