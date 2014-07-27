@@ -14,7 +14,7 @@
     </licenses>
     
     <scm>
-        <connection>scm:git:https://github.com/wiztools/json-validator.git</connection>
+        <connection>scm:git:git@github.com:wiztools/json-validator.git</connection>
     </scm>
     
     <build>
