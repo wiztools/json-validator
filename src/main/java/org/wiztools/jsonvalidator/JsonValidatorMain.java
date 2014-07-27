@@ -23,10 +23,11 @@ public class JsonValidatorMain {
     
     public static void main(String[] arg) throws IOException {
         OptionParser cli = new OptionParser("h");
+        cli.accepts("help");
         cli.accepts("noout");
         OptionSet options = cli.parse(arg);
         
-        if(options.has("h")) {
+        if(options.has("h") || options.has("help")) {
             printHelp(System.out);
             System.exit(0);
         }
