@@ -25,6 +25,7 @@ public class JsonValidatorMain {
         OptionParser cli = new OptionParser("h");
         cli.accepts("help");
         cli.accepts("noout");
+        cli.accepts("noformat");
         OptionSet options = cli.parse(arg);
         
         if(options.has("h") || options.has("help")) {
@@ -32,9 +33,14 @@ public class JsonValidatorMain {
             System.exit(0);
         }
         
-        boolean printFormattedOut = true;
+        boolean printOut = true;
         if(options.has("noout")) {
-            printFormattedOut = false;
+            printOut = false;
+        }
+        
+        final Config config = new Config();
+        if(options.has("noformat")) {
+            config.setPrettyPrint(false);
         }
         
         List<String> files = (List<String>) options.nonOptionArguments();
@@ -42,8 +48,8 @@ public class JsonValidatorMain {
         if(files.isEmpty()) { // read from STDIN:
             try(BufferedReader br = new BufferedReader(
                     new InputStreamReader(System.in))) {
-                final String out = JsonValidate.validate(br);
-                if(printFormattedOut) {
+                final String out = JsonValidate.validate(br, config);
+                if(printOut) {
                     if(System.console() != null) {
                         System.out.println();
                     }
@@ -60,8 +66,8 @@ public class JsonValidatorMain {
             for(String file: files) {
                 File f = new File(file);
                 try(FileReader fr = new FileReader(f)) {
-                    final String out = JsonValidate.validate(fr);
-                    if(printFormattedOut) {
+                    final String out = JsonValidate.validate(fr, config);
+                    if(printOut) {
                         System.out.println(out);
                     }
                 }

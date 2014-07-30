@@ -16,9 +16,14 @@ public final class JsonValidate {
 
     private JsonValidate() {}
     
-    public static String validate(Reader input) throws IOException, JsonSyntaxException {
+    public static String validate(Reader input,
+            Config config) throws IOException, JsonSyntaxException {
         JsonParser parser = new JsonParser();
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        GsonBuilder builder = new GsonBuilder();
+        if(config.isPrettyPrint()) {
+            builder.setPrettyPrinting();
+        }
+        Gson gson = builder.create();
         JsonElement el = parser.parse(input);
         String str = gson.toJson(el);
         return str;
