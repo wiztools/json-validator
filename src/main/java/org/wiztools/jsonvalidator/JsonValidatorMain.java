@@ -18,7 +18,12 @@ import joptsimple.OptionSet;
 public class JsonValidatorMain {
     
     private static void printHelp(PrintStream out) {
-        out.println("Usage: json-validator [json-files]");
+        out.println("Usage: json-validator [options] [files]");
+        out.println("When files are not given, STDIN is read for input.");
+        out.println("Supported options are:");
+        out.println("\t--help     Display this help.");
+        out.println("\t--noout    Do not print formatted JSON to STDOUT.");
+        out.println("\t--noformat Do not format JSON--print as single line.");
     }
     
     public static void main(String[] arg) throws IOException {
