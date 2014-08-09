@@ -1,6 +1,5 @@
 package org.wiztools.jsonvalidator;
 
-import com.google.gson.JsonSyntaxException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -21,9 +20,10 @@ public class JsonValidatorMain {
         out.println("Usage: json-validator [options] [files]");
         out.println("When files are not given, STDIN is read for input.");
         out.println("Supported options are:");
-        out.println("\t--help     Display this help.");
-        out.println("\t--noout    Do not print formatted JSON to STDOUT.");
-        out.println("\t--noformat Do not format JSON--print as single line.");
+        out.println("  --help     Display this help.");
+        out.println("  --noout    Do not print formatted JSON to STDOUT.");
+        out.println("  --noformat Do not format JSON--print as single line.");
+        out.println("  --gson     Use Gson instead of default Jackson parser.");
     }
     
     public static void main(String[] arg) throws IOException {
@@ -31,6 +31,7 @@ public class JsonValidatorMain {
         cli.accepts("help");
         cli.accepts("noout");
         cli.accepts("noformat");
+        cli.accepts("gson");
         OptionSet options = cli.parse(arg);
         
         if(options.has("h") || options.has("help")) {
@@ -48,12 +49,22 @@ public class JsonValidatorMain {
             config.setPrettyPrint(false);
         }
         
+        // Choose the engine between Gson and Jackson:
+        final JsonValidator validator;
+        if(options.has("gson")) {
+            validator = new GsonValidator();
+        }
+        else {
+            validator = new JacksonValidator();
+        }
+        
         List<String> files = (List<String>) options.nonOptionArguments();
         
         if(files.isEmpty()) { // read from STDIN:
             try(BufferedReader br = new BufferedReader(
                     new InputStreamReader(System.in))) {
-                final String out = JsonValidate.validate(br, config);
+                
+                final String out = validator.validate(br, config);
                 if(printOut) {
                     if(System.console() != null) {
                         System.out.println();
@@ -61,7 +72,7 @@ public class JsonValidatorMain {
                     System.out.println(out);
                 }
             }
-            catch(JsonSyntaxException ex) {
+            catch(JsonParseException ex) {
                 System.err.println(ex.getMessage());
                 System.exit(1);
             }
@@ -71,12 +82,12 @@ public class JsonValidatorMain {
             for(String file: files) {
                 File f = new File(file);
                 try(FileReader fr = new FileReader(f)) {
-                    final String out = JsonValidate.validate(fr, config);
+                    final String out = validator.validate(fr, config);
                     if(printOut) {
                         System.out.println(out);
                     }
                 }
-                catch(JsonSyntaxException ex) {
+                catch(JsonParseException ex) {
                     System.err.println(f.getName() + ": " + ex.getMessage());
                     exitStatus++;
                 }
