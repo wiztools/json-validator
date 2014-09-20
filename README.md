@@ -12,3 +12,6 @@ Supported options are:
 	--noformat Do not format JSON--print as single line.
 ```
 
+This tool is available as part of _"The Joy of Unix in Windows Tool Bundle"_:
+
+[![](http://static.wiztools.org/wiztools-cli-tools.png)](http://cli-bundle.wiztools.org/)
