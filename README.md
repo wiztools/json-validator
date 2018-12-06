@@ -18,6 +18,6 @@ When files are not given, STDIN is read for input.
 Supported options are:
 	--help     Display this help.
 	--noout    Do not print formatted JSON to STDOUT.
-	--noformat Do not format JSON--print as single line.
+	--noformat Do not format JSON.
 	--gson     Use Gson instead of default Jackson parser.
 ```
