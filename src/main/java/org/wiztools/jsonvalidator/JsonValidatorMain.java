@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.List;
+
+import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
@@ -32,7 +34,14 @@ public class JsonValidatorMain {
         cli.accepts("noout");
         cli.accepts("noformat");
         cli.accepts("gson");
-        OptionSet options = cli.parse(arg);
+
+        OptionSet options = null;
+        try {
+            options = cli.parse(arg);
+        } catch(OptionException ex) {
+            System.err.println(ex.getMessage());
+            System.exit(1);
+        }
         
         if(options.has("h") || options.has("help")) {
             printHelp(System.out);
