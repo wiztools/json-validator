@@ -22,7 +22,7 @@ public class JsonValidatorMain {
         out.println("Supported options are:");
         out.println("  --help     Display this help.");
         out.println("  --noout    Do not print formatted JSON to STDOUT.");
-        out.println("  --noformat Do not format JSON--print as single line.");
+        out.println("  --noformat Do not format JSON.");
         out.println("  --gson     Use Gson instead of default Jackson parser.");
     }
     
