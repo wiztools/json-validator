@@ -1,6 +1,7 @@
 package org.wiztools.jsonvalidator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 
 import java.io.IOException;
@@ -12,7 +13,11 @@ public class JacksonValidator implements JsonValidator {
         ObjectMapper mapper = new ObjectMapper();
         try {
             Object jsonObject = mapper.readValue(input, Object.class);
-            return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
+
+            final ObjectWriter writer = config.isPrettyPrint()?
+                    mapper.writerWithDefaultPrettyPrinter(): mapper.writer();
+
+            return writer.writeValueAsString(jsonObject);
         } catch (com.fasterxml.jackson.core.JsonParseException | MismatchedInputException ex) {
             throw new JsonParseException(ex);
         }
